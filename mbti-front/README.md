@@ -1,4 +1,4 @@
-# app
+# mbti-front
 
 ## Project setup
 ```
