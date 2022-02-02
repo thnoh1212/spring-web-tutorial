@@ -42,6 +42,9 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updDate;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    List<Comment> comments;
+
 
 
     @Getter
@@ -75,10 +78,6 @@ public class Post {
         this.updDate = LocalDateTime.now();
     }
 
-    public void setTimeBeforeUpdate(){
-        this.updDate = LocalDateTime.now();
-    }
-
     // 함수명 이게 맞나..?
     public Post.postForBoard of(){
         return postForBoard.builder().
@@ -93,7 +92,7 @@ public class Post {
         if(this.author.equals(post.getAuthor()) && this.postNo == post.getPostNo()){
             this.title = post.getTitle();
             this.mainText = post.getMainText();
-            setTimeBeforeUpdate();
+            this.updDate = LocalDateTime.now();
             return true;
         }
         return false;
