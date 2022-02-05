@@ -27,7 +27,7 @@ public class CommentController {
 
     @PatchMapping
     public ApiResult<String> update(
-            @RequestBody @Valid Comment comment
+            @RequestBody @Valid Comment.CommentForUpdate comment
     ){
         commentService.updateComment(comment);
         return ApiResult.success(null, HttpStatus.OK);

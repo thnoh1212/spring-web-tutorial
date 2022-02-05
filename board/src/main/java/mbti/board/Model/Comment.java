@@ -1,7 +1,9 @@
 package mbti.board.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,8 +18,9 @@ public class Comment {
     private long commentNo;
 
     @ManyToOne
-    @JoinColumn(name = "post_no", insertable = false, updatable = false)
-    private Post postNo;
+    @JoinColumn(name = "post_no", referencedColumnName = "postNo")
+    @JsonBackReference
+    private Post post;
 
     @Column(nullable = false)
     private String author;
@@ -36,8 +39,7 @@ public class Comment {
         this.updDate = LocalDateTime.now();
     }
 
-
-    public boolean updateCommentInfo(Comment comment) {
+    public boolean updateCommentInfo(Comment.CommentForUpdate comment) {
         if (comment.getCommentNo() == this.getCommentNo()) {
             this.text = comment.text;
             this.updDate = LocalDateTime.now();
@@ -45,5 +47,17 @@ public class Comment {
         }
         return false;
 
+    }
+
+
+    @Getter
+    @Setter
+    public static class CommentForUpdate{
+
+        private long commentNo;
+
+        private String author;
+
+        private String text;
     }
 }
