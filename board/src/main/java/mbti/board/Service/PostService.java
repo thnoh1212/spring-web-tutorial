@@ -33,7 +33,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<Post.postForBoard> readPostList(int page, int limit){
+    public List<Post.PostForBoard> readPostList(int page, int limit){
         try {
             List<Post> postList = postRepository.findAll(PageRequest.of(page - 1, limit, Sort.by("insDate").descending())).toList();
             return postList.stream().map(Post::of).collect(Collectors.toList());

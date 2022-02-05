@@ -66,7 +66,7 @@ public class Post {
 
     @Builder
     @Getter
-    public static class postForBoard{
+    public static class PostForBoard {
         private final long postNo;
         private final String author;
         private final String title;
@@ -79,8 +79,8 @@ public class Post {
     }
 
     // 함수명 이게 맞나..?
-    public Post.postForBoard of(){
-        return postForBoard.builder().
+    public PostForBoard of(){
+        return PostForBoard.builder().
             postNo(this.postNo).
             author(this.author).
             title(this.title).
