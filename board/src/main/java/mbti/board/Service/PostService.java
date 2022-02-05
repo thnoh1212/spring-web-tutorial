@@ -3,6 +3,7 @@ package mbti.board.Service;
 import lombok.RequiredArgsConstructor;
 import mbti.board.Exception.BusinessException;
 import mbti.board.Model.Post;
+import mbti.board.Repository.CommentRepository;
 import mbti.board.Repository.PostRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,9 +17,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
+public class PostService {
 
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(rollbackFor = BusinessException.class)
     public void createPost(Post post){
@@ -42,13 +44,15 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public Post readPostDetail(long pageNo){
-        return postRepository.findById(pageNo)
+        Post post = postRepository.findById(pageNo)
             .orElseThrow(() -> new BusinessException("글 정보가 존재하지 않습니다."));
+        post.setComments(commentRepository.findAllByPost(post));
+        return post;
     }
 
     @Transactional(rollbackFor = BusinessException.class)
-    public void updatePost(Post.postForUpdate postForUpdate){
-        Post post = postRepository.findById(postForUpdate.getPageNo())
+    public void updatePost(Post.PostForUpdate postForUpdate){
+        Post post = postRepository.findById(postForUpdate.getPostNo())
                 .orElseThrow(() -> new BusinessException("기존 글 정보가 존재하지 않습니다."));
 
         if(post.updatePostInfo(postForUpdate)){
@@ -69,10 +73,12 @@ public class BoardService {
     @Transactional(rollbackFor = BusinessException.class)
     public void deletePost(String author, long postNo) throws BusinessException{
 
-        if(postRepository.findById(postNo).equals(author))
+        var post = postRepository.findById(postNo);
+
+        if(post.isPresent() && post.get().getAuthor().equals(author))
             postRepository.deleteById(postNo);
         else
-            throw new BusinessException("요청한 작성자와 삭제하려는 글의 작성자가 다릅니다.");
+            throw new BusinessException("삭제하려는 글 정보에 문제가 있습니다.");
 
     }
 

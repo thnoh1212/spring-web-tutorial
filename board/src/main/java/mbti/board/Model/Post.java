@@ -3,27 +3,26 @@ package mbti.board.Model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 //TODO: validation 에러 메시지 문구 재설정
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postNo;
+    private Long postNo;
 
     @NotEmpty(message = "작성자 정보가 제대로 넘어오지 않음")
     @Column(length = 30, nullable = false)
@@ -37,20 +36,23 @@ public class Post {
     @Column(nullable = false)
     private String mainText;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime insDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime updDate;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    List<Comment> comments;
 
 
 
     @Getter
     @NoArgsConstructor
-    public static class postForUpdate{
+    public static class PostForUpdate {
 
         @Min(value = 1, message = "수정하려는 글 번호가 정상적이지 않습니다.")
-        private long pageNo;
+        private long postNo;
 
         @NotEmpty(message = "작성자 정보가 제대로 넘어오지 않음")
         private String author;
@@ -76,10 +78,6 @@ public class Post {
         this.updDate = LocalDateTime.now();
     }
 
-    public void setTimeBeforeUpdate(){
-        this.updDate = LocalDateTime.now();
-    }
-
     // 함수명 이게 맞나..?
     public Post.postForBoard of(){
         return postForBoard.builder().
@@ -90,11 +88,11 @@ public class Post {
             build();
     }
 
-    public boolean updatePostInfo(Post.postForUpdate post){
-        if(this.author.equals(post.getAuthor()) && this.postNo == post.getPageNo()){
+    public boolean updatePostInfo(PostForUpdate post){
+        if(this.author.equals(post.getAuthor()) && this.postNo == post.getPostNo()){
             this.title = post.getTitle();
             this.mainText = post.getMainText();
-            setTimeBeforeUpdate();
+            this.updDate = LocalDateTime.now();
             return true;
         }
         return false;

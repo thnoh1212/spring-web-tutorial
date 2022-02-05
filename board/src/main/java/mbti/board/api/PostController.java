@@ -2,7 +2,7 @@ package mbti.board.api;
 
 import lombok.RequiredArgsConstructor;
 import mbti.board.Model.Post;
-import mbti.board.Service.BoardService;
+import mbti.board.Service.PostService;
 import mbti.board.api.bind.ApiResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,53 +17,53 @@ import java.util.List;
 @Valid
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
-public class BoardController {
+@RequestMapping("/post")
+public class PostController {
 
-    private final BoardService boardService;
+    private final PostService postService;
 
-    @PostMapping("/post")
+    @PostMapping
     public ApiResult<String> create(
             @RequestBody @Valid Post post
     ){
-        boardService.createPost(post);
+        postService.createPost(post);
         return ApiResult.success(null, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public ApiResult<List<Post.postForBoard>> readList(
             @RequestParam @Min(value = 1, message = "첫 페이지보다 더 이전의 페이지를 조회했습니다.") int page,
             @RequestParam @Min(value = 1, message = "한 페이지에 최소 한 개 이상의 정보가 표시되어야 합니다.") int limit
     ){
-        return ApiResult.success(boardService.readPostList(page, limit), HttpStatus.OK);
+        return ApiResult.success(postService.readPostList(page, limit), HttpStatus.OK);
     }
 
-    @GetMapping("/post/{postNo}")
+    @GetMapping("/{postNo}")
     public ApiResult<Post> readDetail(
             @PathVariable @Min(value = 1, message = "조회하려는 글 번호가 정상적이지 않습니다.") long postNo
     ){
         return ApiResult.success(
-            boardService.readPostDetail(postNo),
+            postService.readPostDetail(postNo),
             HttpStatus.OK
         );
     }
 
 
-    @PatchMapping("/post")
+    @PatchMapping
     public ApiResult<String> update(
-            @RequestBody @Valid Post.postForUpdate postForUpdate
+            @RequestBody @Valid Post.PostForUpdate postForUpdate
     ){
-        boardService.updatePost(postForUpdate);
+        postService.updatePost(postForUpdate);
         return ApiResult.success(null, HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/post")
+    @DeleteMapping
     public ApiResult<String> delete(
             @RequestParam @NotEmpty(message = "작성자 정보가 확인되지 않습니다. 재 로그인 후 다시 시도해주시기 바랍니다.") String author,
-            @RequestParam @Min(value = 1, message = "삭제하려는 글 번호가 정상적이지 않습니다.") long pageNo
+            @RequestParam @Min(value = 1, message = "삭제하려는 글 번호가 정상적이지 않습니다.") long postNo
     ){
-        boardService.deletePost(author, pageNo);
+        postService.deletePost(author, postNo);
         return ApiResult.success(null, HttpStatus.OK);
     }
 
