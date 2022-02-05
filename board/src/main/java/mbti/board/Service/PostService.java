@@ -46,12 +46,12 @@ public class PostService {
     public Post readPostDetail(long pageNo){
         Post post = postRepository.findById(pageNo)
             .orElseThrow(() -> new BusinessException("글 정보가 존재하지 않습니다."));
-        post.setComments(commentRepository.findAllByPostNo(post));
+        post.setComments(commentRepository.findAllByPost(post));
         return post;
     }
 
     @Transactional(rollbackFor = BusinessException.class)
-    public void updatePost(Post.postForUpdate postForUpdate){
+    public void updatePost(Post.PostForUpdate postForUpdate){
         Post post = postRepository.findById(postForUpdate.getPostNo())
                 .orElseThrow(() -> new BusinessException("기존 글 정보가 존재하지 않습니다."));
 

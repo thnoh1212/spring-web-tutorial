@@ -49,7 +49,7 @@ public class Post {
 
     @Getter
     @NoArgsConstructor
-    public static class postForUpdate{
+    public static class PostForUpdate {
 
         @Min(value = 1, message = "수정하려는 글 번호가 정상적이지 않습니다.")
         private long postNo;
@@ -88,7 +88,7 @@ public class Post {
             build();
     }
 
-    public boolean updatePostInfo(Post.postForUpdate post){
+    public boolean updatePostInfo(PostForUpdate post){
         if(this.author.equals(post.getAuthor()) && this.postNo == post.getPostNo()){
             this.title = post.getTitle();
             this.mainText = post.getMainText();

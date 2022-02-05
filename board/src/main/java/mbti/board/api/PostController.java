@@ -51,7 +51,7 @@ public class PostController {
 
     @PatchMapping
     public ApiResult<String> update(
-            @RequestBody @Valid Post.postForUpdate postForUpdate
+            @RequestBody @Valid Post.PostForUpdate postForUpdate
     ){
         postService.updatePost(postForUpdate);
         return ApiResult.success(null, HttpStatus.OK);
@@ -61,9 +61,9 @@ public class PostController {
     @DeleteMapping
     public ApiResult<String> delete(
             @RequestParam @NotEmpty(message = "작성자 정보가 확인되지 않습니다. 재 로그인 후 다시 시도해주시기 바랍니다.") String author,
-            @RequestParam @Min(value = 1, message = "삭제하려는 글 번호가 정상적이지 않습니다.") long pageNo
+            @RequestParam @Min(value = 1, message = "삭제하려는 글 번호가 정상적이지 않습니다.") long postNo
     ){
-        postService.deletePost(author, pageNo);
+        postService.deletePost(author, postNo);
         return ApiResult.success(null, HttpStatus.OK);
     }
 
